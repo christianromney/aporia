@@ -8,7 +8,9 @@ Download from https://github.com/christianromney/aporia
 
 ## Usage
 
-FIXME: explanation
+You must set the `OPENAI_API_KEY` environment variable to run this code.
+
+Having done that, you may...
 
 Run the project directly, via `:main-opts` (`-m aporia.aporia`):
 
