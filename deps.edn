@@ -1,0 +1,15 @@
+{:paths ["src" "resources"]
+ :deps {org.clojure/clojure {:mvn/version "1.12.0-alpha5"}
+        net.clojars.wkok/openai-clojure {:mvn/version "0.14.0"}}
+ :aliases
+ {:socratic-partner {:main-opts ["-m" "aporia.aporia"]}
+  :chatgpt {:ns-default aporia.aporia
+            :exec-fn chat
+            :exec-args {:user-input "I think we need sandbox environments for testing purposes."}}
+  :build {:deps {io.github.clojure/tools.build
+                 {:mvn/version "0.9.6"}}
+          :ns-default build}
+  :test {:extra-paths ["test"]
+         :extra-deps {org.clojure/test.check {:mvn/version "1.1.1"}
+                      io.github.cognitect-labs/test-runner
+                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}}}}
