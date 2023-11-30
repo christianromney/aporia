@@ -1,6 +1,8 @@
 (ns aporia.cli
   (:gen-class)
-  (:require [wkok.openai-clojure.api :as openai]))
+  (:require [wkok.openai-clojure.api :as openai]
+            [clojure.pprint :refer [pprint]]
+            [clojure.datafy :refer [datafy]]))
 
 (def ^:const gpt4 "gpt-4-1106-preview")
 
@@ -17,38 +19,76 @@
   should probe whether that is really my ultimate objective or merely a waypoint
   implied by a presumed solution the a more fundamental or general problem. Always
   suggest a few concrete alternatives to my idea and offer a few criteria
-  I can use to compare all the alternatives fairly."}})
+  I can use to compare all the alternatives fairly."}
+   :socratic-foil
+   {:role "system"
+    :content "You are a friendly colleague who is helping me sharpen my
+    reasoning and analysis skills via Socratic dialogue. You are not easily
+    convinced of initial ideas. Whenever I suggest an idea, you probe my answer
+    looking for possible weaknesses. You might draw attention to these
+    drawbacks. You might also offer a couple of alternative ideas for me to
+    consider. Remind me why you answer the way you do."}
+   :socratic-dreamer
+   {:role "system"
+    :content "You are a friendly colleague who is engaging in a group problem
+    solving exercise. Whenever I suggest an idea, you might suggest a more
+    general approach or broader applications of the idea. You are trying to
+    expand the range of possibilities we consider. You prefer to find reusable,
+    categorical solutions to general problems. Remind me why you answer the way
+    you do."}
+   :socratic-focuser
+   {:role "system"
+    :content "You are a friendly colleague who is engaging in a group problem
+   solving exercise. Whenever I suggest an broad idea, you try to narrow the
+   focus. You may offer suggestions that limit the possibilities in order to
+   prevent scope creep and long implementation timelines. Remind me why you
+   answer the way you do."} })
 
-(defn- user-prompt
+(defn- format-user-input
   "Creates a prompt message representing user input into a chat conversation."
   [{:keys [input] :as data}]
-  (tap> {:prompt data})
   {:role "user" :content input})
 
-(defn read-chat-reply
-  "Extracts the text of the chat reply."
+(defn read-metadata
+  "Return the timestamp and token count."
   [response]
-  (tap> response)
+  (dissoc response :choices))
+
+(defn read-chat-reply
+  "Extracts the text of the chat reply from a response message."
+  [response]
   (get-in response [:choices 0 :message :content]))
+
+(defn find-interlocutor
+  "Looks for the system prompt identified by the :persona, defaulting
+  to :socratic-trainer if no value was supplied. If a known persona is
+  requested, its prompt message is returned. Otherwise a random persona's
+  message will be selected."
+  [{:keys [persona] :or {persona :socratic-trainer}}]
+  (or (system-prompts persona)
+      (val (rand-nth (seq system-prompts)))))
 
 (defn send-chat-message
   "Chats with an OpenAI GPT model using the system prompt specified by the
-  given :persona and the supplied :user-input. Defaults to the GPT4 :model."
-  [{:keys [persona model] :or {model gpt4
-                               persona :socratic-trainer} :as data}]
+  given :persona and the supplied :input. Defaults to the gpt4 :model."
+  [{:keys [model] :or {model gpt4} :as data}]
   (openai/create-chat-completion {:model model
-                                  :messages [(system-prompts persona)
-                                             (user-prompt data)]}))
-(defn chat
-  "High-level function to send a chat message (with possible history) and return
-  only the text of the reply."
+                                  :messages
+                                  [(find-interlocutor data)
+                                   (format-user-input data)]}))
+
+(defn print-chat
+  "High-level function to send a chat message (with possible history) and print
+  the text of the reply."
   [data]
-  (->> data send-chat-message read-chat-reply))
+  (let [response (send-chat-message data)]
+    (tap> {:stats (read-metadata response)})
+    (println (read-chat-reply response))))
 
 (defn -main
-  "Command Line ChatGPT"
+  "Command Line entrypoint to canned ChatGPT prompts."
   [& args]
   (try
-    (println (chat {:input (first args)}))
+    (print-chat {:input (first args)})
     (catch Exception ex
-      (println ex))))
+      (println (datafy ex)))))
