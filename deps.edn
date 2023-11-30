@@ -2,10 +2,10 @@
  :deps {org.clojure/clojure {:mvn/version "1.12.0-alpha5"}
         net.clojars.wkok/openai-clojure {:mvn/version "0.14.0"}}
  :aliases
- {:socratic-partner {:main-opts ["-m" "aporia.aporia"]}
-  :chatgpt {:ns-default aporia.aporia
+ {:socratic-trainer {:main-opts ["-m" "aporia.cli"]}
+  :chatgpt {:ns-default aporia.cli
             :exec-fn chat
-            :exec-args {:user-input "I think we need sandbox environments for testing purposes."}}
+            :exec-args {:input "I think we need sandbox environments for testing purposes."}}
   :build {:deps {io.github.clojure/tools.build
                  {:mvn/version "0.9.6"}}
           :ns-default build}
