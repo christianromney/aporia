@@ -37,7 +37,7 @@
           chat-reply (chat/get-response-text response)]
       (println "# User Input:\n")
       (println input)
-      (println "# Response:\n")
+      (println "\n# Response:\n")
       (println chat-reply)
       (when (valid-path? path)
         (tts/text-to-speech {:text chat-reply :path path})))
