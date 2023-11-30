@@ -3,12 +3,6 @@
         net.clojars.wkok/openai-clojure {:mvn/version "0.14.0"}}
  :aliases
  {:socratic-trainer {:main-opts ["-m" "aporia.cli"]}
-
-  :colleague {:ns-default aporia.cli
-              :exec-fn print-chat
-              :exec-args {:input "I think we need sandbox environments for testing purposes."
-                          :persona :random}}
-
   :build {:deps {io.github.clojure/tools.build
                  {:mvn/version "0.9.6"}}
           :ns-default build}
