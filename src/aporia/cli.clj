@@ -117,6 +117,6 @@
           response (send-chat-message input)]
       (print-response response)
       (when (valid-path? path)
-        (-> response spoken-response (save-stream-to-file path)))
+        (-> response spoken-response (save-stream-to-file path))))
     (catch Exception ex
-      (println (datafy ex))))))
+      (println (datafy ex)))))
