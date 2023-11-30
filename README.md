@@ -14,8 +14,7 @@ Having done that, you may...
 
 Run the project directly, via `:main-opts` (`-m aporia.cli`):
 
-    $ clojure -M:socratic-trainer "I think we need better sandbox environments for testing our code."
-
+    $ clojure -M:analysis-trainer (training | critiquing | expanding | contracting) "I think we need a better staging environment to help reduce the number of big production crashes." ~/Desktop/audio.mp3
 
 Run the project's tests (they'll fail until you edit them):
 
