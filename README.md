@@ -12,9 +12,9 @@ You must set the `OPENAI_API_KEY` environment variable to run this code.
 
 Having done that, you may...
 
-Run the project directly, via `:main-opts` (`-m aporia.aporia`):
+Run the project directly, via `:main-opts` (`-m aporia.cli`):
 
-    $ clojure -M:socratic-partner "I think we need better sandbox environments for testing our code."
+    $ clojure -M:socratic-trainer "I think we need better sandbox environments for testing our code."
 
 
 Run the project's tests (they'll fail until you edit them):
