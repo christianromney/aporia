@@ -15,9 +15,9 @@
   or impediments to the goal's achievement. My objective is always to indentify
   root problems and not merely symptoms. When I say I want to do something, you
   should probe whether that is really my ultimate objective or merely a waypoint
-  implied by a presumed solution the a more fundamental or general problem. You
-  should also suggest a few alternatives to my approach and offer a few criteria
-  I can use to compare them."}})
+  implied by a presumed solution the a more fundamental or general problem. Always
+  suggest a few concrete alternatives to my idea and offer a few criteria
+  I can use to compare all the alternatives fairly."}})
 
 (defn- user-prompt
   "Creates a prompt message representing user input into a chat conversation."
