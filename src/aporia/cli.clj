@@ -94,7 +94,7 @@
   [response]
   (openai/create-speech {:model "tts-1"
                          :input (read-chat-reply response)
-                         :voice (random-nth ["onyx" "alloy" "nova"])
+                         :voice (rand-nth ["onyx" "alloy" "nova"])
                          :response_format "mp3"}))
 
 (defn save-stream-to-file
