@@ -20,10 +20,10 @@
 
 (defn- parse-positional-args
   "Returns a map naming the positional arguments supplied to -main."
-  [[text filename persona]]
+  [[persona text audio-filename]]
   {:input text
-   :path filename
-   :persona persona})
+   :path audio-filename
+   :persona (keyword persona)})
 
 ;; == public ==
 
@@ -32,8 +32,8 @@
   [& args]
   (try
     (let [{:keys [path] :as opts} (parse-positional-args args)
-          response             (chat/send-message opts)
-          chat-reply           (chat/get-response-text response)]
+          response                (chat/send-message opts)
+          chat-reply              (chat/get-response-text response)]
       (println chat-reply)
       (when (valid-path? path)
         (tts/text-to-speech {:text chat-reply :path path})))
