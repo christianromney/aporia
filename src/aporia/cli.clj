@@ -2,8 +2,11 @@
   "A prototyping playground for Chat GPT"
   (:gen-class)
   (:require [wkok.openai-clojure.api :as openai]
+            [clojure.datafy :refer [datafy]]
+            [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]
-            [clojure.datafy :refer [datafy]]))
+            [clojure.reflect :refer [reflect]])
+  (:import [java.nio.file Paths Files]))
 
 (def ^:const gpt4 "gpt-4-1106-preview")
 
@@ -79,18 +82,41 @@
                                   [(find-interlocutor data)
                                    (format-user-input data)]}))
 
-(defn print-chat
-  "High-level function to send a chat message (with possible history) and print
-  the text of the reply."
-  [data]
-  (let [response (send-chat-message data)]
-    (tap> {:stats (read-metadata response)})
-    (println (read-chat-reply response))))
+(defn print-response
+  "Prints a chat completion api response to stdout."
+  [response]
+  (tap> {:stats (read-metadata response)})
+  (println (read-chat-reply response)))
+
+(defn spoken-response
+  "Given a chat completion ressponse, invokes the Whisper API to convert the text
+  to mp3 audio. Returns an input stream containing that audio content."
+  [response]
+  (openai/create-speech {:model "tts-1"
+                         :input (read-chat-reply response)
+                         :voice "onyx"
+                         :response_format "mp3"}))
+
+(defn save-stream-to-file
+  "Writes the input stream to the given file path."
+  [input-stream path]
+  (with-open [is input-stream]
+    (io/copy is (io/file path))))
+
+(defn valid-path?
+  "Returns a valid path object ot throws an IllegalArgumentException."
+  [path]
+  (Paths/get path (into-array String [])))
 
 (defn -main
   "Command Line entrypoint to canned ChatGPT prompts."
   [& args]
   (try
-    (print-chat {:input (first args)})
+    (let [input {:input (first args)}
+          path (second args)
+          response (send-chat-message input)]
+      (print-response response)
+      (when (valid-path? path)
+        (-> response spoken-response (save-stream-to-file path)))
     (catch Exception ex
       (println (datafy ex)))))
