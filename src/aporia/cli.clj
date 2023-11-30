@@ -1,4 +1,5 @@
 (ns aporia.cli
+  "A prototyping playground for Chat GPT"
   (:gen-class)
   (:require [wkok.openai-clojure.api :as openai]
             [clojure.pprint :refer [pprint]]
